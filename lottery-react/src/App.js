@@ -32,7 +32,7 @@ class App extends Component {
     });
   }
 
-  clearMessages(){
+  clearMessages() {
     this.setState({
       error: '',
       message: ''
@@ -48,7 +48,8 @@ class App extends Component {
     await lottery.methods.enter().send({
       from: account,
       value: web3.utils.toWei(this.state.value, "ether"),
-      gas: '100000'
+      gas: '100000',
+      gasPrice: '1000000000'
     });
 
     this.setState({ message: "You have entered the lottery!" });
@@ -71,41 +72,52 @@ class App extends Component {
       await this.loadData();
     }
     else {
-      this.setState({error: "Transaction failed"});
-    } 
+      this.setState({ error: "Transaction failed" });
+    }
 
-};
+  };
 
-render() {
-  return (
-    <div>
-      <h2>Lottery contract</h2>
-      <p>
-        This contract is managed by {this.state.manager}. There are currently{" "}
-        {this.state.players.length} people entered, competing to win{" "}
-        {web3.utils.fromWei(this.state.balance, "ether")} ether!
+  render() {
+    return (
+      <div>
+        <h2>Lottery contract</h2>
+        <p>
+          This contract is managed by {this.state.manager}. There are currently{" "}
+          <span style={colors.blue}>{this.state.players.length}</span>
+          people entered, competing to win{" "}
+          <span style={colors.blue}>{web3.utils.fromWei(this.state.balance, "ether")}</span> ether!
         </p>
-      <hr />
-      <form onSubmit={this.onSubmit}>
-        <h4>Want to try your luck?</h4>
-        <div>
-          <label>Amount of ether to enter</label>
-          <input
-            value={this.state.value}
-            onChange={event => this.setState({ value: event.target.value })}
-          />
-        </div>
-        <button>Enter</button>
-      </form>
-      <hr />
-      <h4>Ready to pick a winner?</h4>
-      <button onClick={this.onClick}>Pick a winner!</button>
+        <hr />
 
-      <h1 style={colors.green}>{this.state.message}</h1>
-      <h1 style={colors.red}>{this.state.error}</h1>
-    </div>
-  );
-}
+        {this.state.players.length > 0 ? 
+        <span style={colors.blue}>Address that joined lottery:</span> : null}
+        
+
+        {this.state.players.map( address => {
+          return <p style={colors.purple}><span>{address}</span></p>
+        })
+        }
+
+        <form onSubmit={this.onSubmit}>
+          <h4>Want to try your luck?</h4>
+          <div>
+            <label>Amount of ether to enter</label>
+            <input
+              value={this.state.value}
+              onChange={event => this.setState({ value: event.target.value })}
+            />
+          </div>
+          <button>Enter</button>
+        </form>
+        <hr />
+        <h4>Ready to pick a winner?</h4>
+        <button onClick={this.onClick}>Pick a winner!</button>
+
+        <h1 style={colors.green}>{this.state.message}</h1>
+        <h1 style={colors.red}>{this.state.error}</h1>
+      </div>
+    );
+  }
 }
 
 export default App;
